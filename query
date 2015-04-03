@@ -14,13 +14,13 @@ for outfile in $(find . -newer ${UPDATED_FILES} -name 'out'); do
     grep -Ev '&bitlbee' <<< ${outfile} &> /dev/null || continue
     grep -Ev '(chat.freenode.net|localhost)/out' <<< ${outfile}
 
-    if [[ -f ${IRCSHADOW}/$i ]]; then
+    if [[ -f ${IRCSHADOW}/${outfile} ]]; then
         re='^[<>][^<]*<cdchawthorne>|^[^<>]'
         diff_output="$(diff ${IRCPATH}/${outfile} ${IRCSHADOW}/${outfile})"
         [[ -z "$(grep -Ev ${re} <<< ${diff_output})" ]] && continue
     fi
     mkdir -p "$(dirname ${IRCSHADOW}/${outfile})"
-    cp ${IRCPATH}/$i ${IRCSHADOW}/${outfile}
+    cp ${IRCPATH}/${outfile} ${IRCSHADOW}/${outfile}
     channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< ${outfile})"
     if ! grep -F ${channel} ${UPDATED_FILES} &> /dev/null; then
         echo ${channel} >> ${UPDATED_FILES}
