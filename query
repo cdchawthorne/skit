@@ -10,14 +10,11 @@ if [[ ! -f ${UPDATED_FILES} ]]; then
     touch ${UPDATED_FILES}
 fi
 
-for i in $(find ${IRCPATH} -newer ${UPDATED_FILES} -name 'out'); do
-    if grep -Ev '&bitlbee' <<< ${i} &> /dev/null; then
-        continue
-    fi
+for i in $(find . -newer ${UPDATED_FILES} -name 'out'); do
+    grep -Ev '&bitlbee' <<< ${i} &> /dev/null && continue
+
     re='^[<>][^<]*<cdchawthorne>|^[^<>]'
-    if [[ -z "$(diff ${IRCPATH}/$i ${IRCSHADOW}/$i | grep -Ev ${re})" ]]; then
-        continue
-    fi
+    [[ -f ${IRCSHADOW}/$i ]] && [[ -z "$(diff ${IRCPATH}/$i ${IRCSHADOW}/$i | grep -Ev ${re})" ]] && continue
     cp ${IRCPATH}/$i ${IRCSHADOW}/$i
     channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< $i)"
     grep -F ${channel} ${UPDATED_FILES} &> /dev/null || echo ${channel} >> ${UPDATED_FILES}
