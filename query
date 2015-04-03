@@ -17,9 +17,11 @@ for outfile in $(find . -newer ${UPDATED_FILES} -name 'out'); do
     if [[ -f ${IRCSHADOW}/${outfile} ]]; then
         re2='^[<>][^<]*<cdchawthorne>|^[^<>]'
         diff_output="$(diff ${IRCPATH}/${outfile} ${IRCSHADOW}/${outfile})"
-        [[ -z "$(grep -Ev ${re2} <<< ${diff_output})" ]] && continue
+        grep -Ev ${re2} <<< ${diff_output} || continue
     fi
-    mkdir -p "$(dirname ${IRCSHADOW}/${outfile})"
+
+    dir="$(dirname ${IRCSHADOW}/${outfile})"
+    [[ ! -d ${dir} ]] && mkdir -p ${dir}
     cp ${IRCPATH}/${outfile} ${IRCSHADOW}/${outfile}
     channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< ${outfile})"
     if ! grep -F ${channel} ${UPDATED_FILES} &> /dev/null; then

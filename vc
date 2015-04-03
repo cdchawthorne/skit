@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+#TODO: have this reference the currently available buddies in bitblee
+
 if [[ $# -ne 1 ]]; then
     echo "usage: $0 NAME" 1>&2
     exit 1
