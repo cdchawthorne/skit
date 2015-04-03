@@ -10,13 +10,19 @@ if [[ ! -f ${UPDATED_FILES} ]]; then
     touch ${UPDATED_FILES}
 fi
 
-for i in $(find . -newer ${UPDATED_FILES} -name 'out'); do
-    grep -Ev '&bitlbee' <<< ${i} &> /dev/null || continue
+for outfile in $(find . -newer ${UPDATED_FILES} -name 'out'); do
+    grep -Ev '&bitlbee' <<< ${outfile} &> /dev/null || continue
+    grep -Ev '(chat.freenode.net|localhost)/out' <<< ${outfile}
 
-    re='^[<>][^<]*<cdchawthorne>|^[^<>]'
-    [[ -f ${IRCSHADOW}/$i ]] && [[ -z "$(diff ${IRCPATH}/$i ${IRCSHADOW}/$i | grep -Ev ${re})" ]] && continue
-    mkdir -p "$(dirname ${IRCSHADOW}/$i)"
-    cp ${IRCPATH}/$i ${IRCSHADOW}/$i
-    channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< $i)"
-    grep -F ${channel} ${UPDATED_FILES} &> /dev/null || echo ${channel} >> ${UPDATED_FILES}
+    if [[ -f ${IRCSHADOW}/$i ]]; then
+        re='^[<>][^<]*<cdchawthorne>|^[^<>]'
+        diff_output="$(diff ${IRCPATH}/${outfile} ${IRCSHADOW}/${outfile})"
+        [[ -z "$(grep -Ev ${re} <<< ${diff_output})" ]] && continue
+    fi
+    mkdir -p "$(dirname ${IRCSHADOW}/${outfile})"
+    cp ${IRCPATH}/$i ${IRCSHADOW}/${outfile}
+    channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< ${outfile})"
+    if ! grep -F ${channel} ${UPDATED_FILES} &> /dev/null; then
+        echo ${channel} >> ${UPDATED_FILES}
+    fi
 done
