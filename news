@@ -10,6 +10,7 @@ function TRAPINT {
 while true; do
     clear
     query
-    sort ${UPDATED_FILES}
+    LC_ALL=C sort ${UPDATED_FILES}
+    grep -E '^[^#]' ${UPDATED_FILES} &> /dev/null && printf '\x07'
     sleep 10
 done

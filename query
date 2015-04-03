@@ -11,7 +11,7 @@ if [[ ! -f ${UPDATED_FILES} ]]; then
 fi
 
 for i in $(find ${IRCPATH} -newer ${UPDATED_FILES} -name 'out'); do
-    if grep -Ev '&bitlbee' <<< ${i}; then
+    if grep -Ev '&bitlbee' <<< ${i} &> /dev/null; then
         continue
     fi
     re='^[<>][^<]*<cdchawthorne>|^[^<>]'
@@ -20,5 +20,5 @@ for i in $(find ${IRCPATH} -newer ${UPDATED_FILES} -name 'out'); do
     fi
     cp ${IRCPATH}/$i ${IRCSHADOW}/$i
     channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< $i)"
-    grep -F ${channel} ${UPDATED_FILES} || echo ${channel} >> ${UPDATED_FILES}
+    grep -F ${channel} ${UPDATED_FILES} &> /dev/null || echo ${channel} >> ${UPDATED_FILES}
 done
