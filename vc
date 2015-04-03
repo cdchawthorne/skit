@@ -1,0 +1,17 @@
+#!/usr/bin/env zsh
+
+if [[ $# -ne 1 ]]; then
+    echo "usage: $0 NAME" 1>&2
+    exit 1
+fi
+
+read_command='rlwrap sed -re ''s|^/me (.*)$|\x01ACTION \1\x01|'' > in'
+
+(
+    setopt no_nomatch
+    builtin cd ~/utilities/irc/*/$1 &> /dev/null ||
+        builtin cd ~/utilities/irc/*/$1* &> /dev/null ||
+        {echo 'ERROR: no such directory' 1>&2; return 1}
+    tmux new-window -t irc -n "$(basename ${PWD})" 'tail -n +0 -f out'
+    tmux split-window -t "irc:$(basename ${PWD})" -l 1 ${read_command}
+)

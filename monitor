@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+clear
+while true; do
+    if [[ $(pgrep -u $(whoami) ii | wc -l) -ne 2 ]]; then
+        echo 'ERROR: too few ii instances' 1>&2
+        return 1
+    fi
+    sleep 10
+done

@@ -1,0 +1,24 @@
+#!/usr/bin/env zsh
+
+IRCPATH=${HOME}/utilities/irc
+IRCSHADOW=${HOME}/utilities/irc_shadow
+UPDATED_FILES=${IRCPATH}/updated.txt
+
+builtin cd ${IRCPATH}
+
+if [[ ! -f ${UPDATED_FILES} ]]; then
+    touch ${UPDATED_FILES}
+fi
+
+for i in $(find ${IRCPATH} -newer ${UPDATED_FILES} -name 'out'); do
+    if grep -Ev '&bitlbee' <<< ${i}; then
+        continue
+    fi
+    re='^[<>][^<]*<cdchawthorne>|^[^<>]'
+    if [[ -z "$(diff ${IRCPATH}/$i ${IRCSHADOW}/$i | grep -Ev ${re})" ]]; then
+        continue
+    fi
+    cp ${IRCPATH}/$i ${IRCSHADOW}/$i
+    channel="$(sed -re 's_\./[^/]*/([^/]*)/out$_\1_' <<< $i)"
+    grep -F ${channel} ${UPDATED_FILES} || echo ${channel} >> ${UPDATED_FILES}
+done

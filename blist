@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+re1='s/^.*root> ([^ ]*) .*Online$/+\1/p' 
+re2='s/^.*root> ([^ ]*) .*Away/\1/p' 
+re3='s/^.*root> ([^ ]*) .*Do not Disturb/-\1/p' 
+
+while true; do
+    rm out
+    echo blist > in
+    sleep 10
+    clear
+    sed -rne ${re1} -e ${re2} -e ${re3} < out | LC_ALL=C sort
+done

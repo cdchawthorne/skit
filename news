@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+IRCPATH=${HOME}/utilities/irc
+UPDATED_FILES=${IRCPATH}/updated.txt
+
+function TRAPINT {
+    cat < /dev/null > ${UPDATED_FILES}
+}
+
+while true; do
+    clear
+    query
+    sort ${UPDATED_FILES}
+    sleep 10
+done
