@@ -1,10 +1,11 @@
 #!/usr/bin/env zsh
 
-clear
-
-re1='s/^.*root> ([^ ]*) .*Online$/+\1/p' 
+re1='s/^.*root> ([^ ]*) .*Online/+\1/p' 
 re2='s/^.*root> ([^ ]*) .*Away/\1/p' 
 re3='s/^.*root> ([^ ]*) .*Do not Disturb/-\1/p' 
+
+builtin cd "${HOME}/utilities/irc/localhost/&bitlbee"
+clear
 
 while true; do
     rm out

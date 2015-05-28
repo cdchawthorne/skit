@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+# TODO: if the most recent line is mine, remove it from the updated files
+
 IRCPATH=${HOME}/utilities/irc
 IRCSHADOW=${HOME}/utilities/irc_shadow
 UPDATED_FILES=${IRCPATH}/updated.txt
@@ -11,7 +13,7 @@ if [[ ! -f ${UPDATED_FILES} ]]; then
 fi
 
 for outfile in $(find . -newer ${UPDATED_FILES} -name 'out'); do
-    re1='&bitlbee|(chat.freenode.net|localhost)/out'
+    re1='&bitlbee|localhost/out'
     grep -Ev ${re1} <<< ${outfile} &> /dev/null || continue
 
     if [[ -f ${IRCSHADOW}/${outfile} ]]; then

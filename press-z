@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+irc_dir=${HOME}/utilities/irc
+skii='racket ~/repos/skit/skii.rkt &>> ~/skii-out.txt'
+ii="ii -s localhost -p 6667 -i ${irc_dir} -n cdchawthorne -f "
+ii+="'Christopher Davis Constant Hawthorne'"
+
+xterm -T irc -class irc -e tmux new-session -n control -As irc ${skii} &|
+
+sleep 0.1
+tmux split-window -v -t irc:control ${ii}
+
+blist_read="rlwrap cat > '${irc_dir}/localhost/&bitlbee/in'"
+tmux new-window -t irc -n bitlbee blist
+tmux split-window -t irc:bitlbee -l 1 ${blist_read}
+tmux split-window -t irc:bitlbee.0 -h news
+tmux split-window -t irc:bitlbee.1 -h
+
+taurine_pager="tail -n +0 -f ${irc_dir}/taurine.csclub.uwaterloo.ca/out"
+taurine_read="rlwrap cat > ${irc_dir}/taurine.csclub.uwaterloo.ca/in"
+tmux new-window -t irc -n taurine ${taurine_pager}
+tmux split-window -t irc:taurine -l 1 ${taurine_read}
