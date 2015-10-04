@@ -4,6 +4,7 @@
 ;; TODO: what happens if the internet disconnects?
 
 (require openssl)
+(require racket/date)
 
 (define irc-dir (build-path (find-system-path 'home-dir)
                             "utilities/irc/taurine.csclub.uwaterloo.ca"))
@@ -17,6 +18,8 @@
   (when pass (fprintf to-server "PASS ~a\r\n" pass))
   (fprintf to-server "NICK ~a\r\n" nick)
   (fprintf to-server "USER ~a 0 * :~a\r\n" nick fullname))
+
+(date-display-format 'iso-8601)
 
 (make-directory* irc-dir)
 (define-values (from-server to-server) (ssl-connect hostname port))
@@ -43,11 +46,11 @@
   (match msg
     [(regexp #rx"^PING (.*)$" (list _ payload))
      (fprintf to-server "PONG ~a\r\n" payload)]
-    [_ (fprintf to-client "~a\n" msg)]))
+    [_ (fprintf to-client "~a ~a\n" (date->string (current-date) #t) msg)]))
 
 (define (handle-from-client msg)
   (fprintf to-server "~a\r\n" msg)
-  (fprintf to-client "~a\n" msg))
+  (fprintf to-client "~a ~a\n" (date->string (current-date) #t) msg))
 
 (define (run)
   (sync (wrap-evt from-client (λ (p) (handle-from-client (read-line p))))
