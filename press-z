@@ -16,7 +16,7 @@ tmux split-window -t irc:bitlbee -l 1 ${blist_read}
 tmux split-window -t irc:bitlbee.0 -h news
 tmux split-window -t irc:bitlbee.1 -h
 
-taurine_pager="tail -n +0 -f ${irc_dir}/taurine.csclub.uwaterloo.ca/out"
+taurine_pager="tail -n 5000 -f ${irc_dir}/taurine.csclub.uwaterloo.ca/out"
 taurine_read="rlwrap cat > ${irc_dir}/taurine.csclub.uwaterloo.ca/in"
 tmux new-window -t irc -n taurine ${taurine_pager}
 tmux split-window -t irc:taurine -l 1 ${taurine_read}

@@ -8,9 +8,11 @@
 
 (define irc-dir (build-path (find-system-path 'home-dir)
                             "utilities/irc/taurine.csclub.uwaterloo.ca"))
+(define-values (src-dir _1 _2) (split-path (find-system-path 'run-file)))
+
 (define nick "cdchawthorne")
 (define fullname "Christopher Davis Constant Hawthorne")
-(define pass "2\\s@fyyL^Aw5&BF7Vws@DW79QMy8$/HA-JxE")
+(define pass (file->string (build-path src-dir "password")))
 (define hostname "taurine.csclub.uwaterloo.ca")
 (define port 50505)
 
